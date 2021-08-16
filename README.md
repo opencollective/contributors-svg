@@ -1,6 +1,6 @@
-# Open Collective Images
+# Contributors SVG
 
-[![Dependency Status](https://david-dm.org/opencollective/opencollective-images/status.svg)](https://david-dm.org/opencollective/opencollective-images)
+[![Dependency Status](https://david-dm.org/opencollective/contributors-svg/status.svg)](https://david-dm.org/opencollective/contributors-svg)
 
 ## Foreword
 
@@ -10,9 +10,9 @@ If you see a step below that could be improved (or is outdated), please update t
 
 ### Prerequisite
 
-1. Make sure you have Node.js version >= 10. We recommend using version 10, the one used in CI and production.
+1. Make sure you have Node.js version >= 14. We recommend using version 14, the one used in CI and production.
 
-- We recommend using [nvm](https://github.com/creationix/nvm): `nvm install`.
+- We recommend using [nvm](https://github.com/creationix/nvm): `nvm install && nvm use`.
 
 2. Make sure you have [GraphicsMagick](http://www.graphicsmagick.org) installed.
 
@@ -24,8 +24,8 @@ If you see a step below that could be improved (or is outdated), please update t
 We recommend cloning the repository in a folder dedicated to `opencollective` projects.
 
 ```
-git clone git@github.com:opencollective/opencollective-images.git opencollective/images
-cd opencollective/images
+git clone git@github.com:opencollective/contributors-svg.git opencollective/contributors-svg
+cd opencollective/contributors-svg
 npm install
 ```
 
@@ -54,7 +54,7 @@ TL;DR: we use [Prettier](https://prettier.io/) and [ESLint](https://eslint.org/)
 
 ## Tests
 
-You can run the tests using `npm test`.
+None
 
 ## Deployment
 
@@ -66,26 +66,18 @@ We're currently relying on the following Heroku buildpacks:
 - https://github.com/MikeKoval/heroku-buildpack-graphicsmagick
 - heroku/nodejs
 
-### Staging (heroku)
+### Staging
 
-```
-# Before first deployment, configure staging remote
-git remote add staging https://git.heroku.com/oc-staging-image-server.git
-
-# Then deploy main with
-npm run deploy:staging
-```
-
-- URL: https://images-staging.opencollective.com/
+None
 
 ### Production (heroku)
 
 ```
 # Before first deployment, configure production remote
-git remote add production https://git.heroku.com/oc-prod-image-server.git
+git remote add production https://git.heroku.com/contributors-svg.git
 
 # Then deploy main with
 npm run deploy:production
 ```
 
-- URL: https://images.opencollective.com/
+- URL: https://contributors-svg.opencollective.com/

@@ -28,7 +28,7 @@ async function fetch(url, options = {}) {
   options.headers['oc-env'] = process.env.OC_ENV;
   options.headers['oc-secret'] = process.env.OC_SECRET;
   options.headers['oc-application'] = process.env.OC_APPLICATION;
-  options.headers['user-agent'] = 'opencollective-images/1.0';
+  options.headers['user-agent'] = 'contributors-svg/1.0';
 
   // Start benchmarking if the request is server side
   const start = process.hrtime.bigint();
@@ -43,17 +43,7 @@ async function fetch(url, options = {}) {
     const latencyTime = apiExecutionTime ? executionTime - Number(apiExecutionTime) : null;
     const body = JSON.parse(options.body);
     if (body.operationName || body.variables) {
-      const pickList = [
-        'CollectiveId',
-        'collectiveSlug',
-        'CollectiveSlug',
-        'id',
-        'ledgacyId',
-        'legacyExpenseId',
-        'slug',
-        'term',
-        'tierId',
-      ];
+      const pickList = ['collectiveSlug'];
       const operationName = body.operationName || 'anonymous GraphQL query';
       const variables = pick(body.variables, pickList) || {};
       console.log(

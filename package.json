@@ -1,14 +1,9 @@
 {
-  "name": "opencollective-images",
+  "name": "contributors-svg",
   "version": "2.2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/opencollective/opencollective-images.git"
-  },
-  "jest": {
-    "testPathIgnorePatterns": [
-      "opencollective-api/"
-    ]
+    "url": "https://github.com/opencollective/contributors-svg.git"
   },
   "private": true,
   "engines": {
@@ -29,7 +24,6 @@
     "graphql": "15.5.1",
     "graphql-tag": "2.12.5",
     "image-size": "1.0.0",
-    "image-to-ascii": "3.0.13",
     "lodash": "4.17.21",
     "lru-cache": "6.0.0",
     "mime-types": "2.1.32",
@@ -46,15 +40,12 @@
     "build": "npm run build:clean && npm run build:server",
     "build:clean": "rm -rf dist",
     "build:server": "babel --copy-files src --out-dir dist",
-    "test": "npm run test:server",
-    "test:circleci": "TZ=UTC ./scripts/run_circleci.sh",
-    "test:server": "TZ=UTC jest test/server/*",
-    "lint": "eslint \"src/**/*.js\" \"test/**/*.js\"",
+    "lint": "eslint \"src/**/*.js\"",
     "lint:fix": "npm run lint -- --fix",
     "lint:quiet": "npm run lint -- --quiet",
     "pretest": "npm run lint:quiet && npm run prettier:check",
     "commit": "git-cz",
-    "prettier": "prettier \"src/**/*.js\" \"test/**/*.js\"",
+    "prettier": "prettier \"src/**/*.js\"",
     "prettier:write": "npm run prettier -- --write",
     "prettier:check": "npm run prettier -- --list-different",
     "deploy:production": "./scripts/pre-deploy.sh production && git push production main",

@@ -30,10 +30,8 @@ fi
 
 # ---- Variables ----
 
-if [ "$1" == "staging" ]; then
-  DEPLOY_ORIGIN_URL="https://git.heroku.com/oc-staging-image-server.git"
-elif [ "$1" == "production" ]; then
-  DEPLOY_ORIGIN_URL="https://git.heroku.com/oc-prod-image-server.git"
+if [ "$1" == "production" ]; then
+  DEPLOY_ORIGIN_URL="https://git.heroku.com/contributors-svg.git"
 else
   echo "Unknwown remote $1"
   exit 1

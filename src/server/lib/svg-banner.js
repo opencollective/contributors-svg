@@ -4,27 +4,14 @@ import pLimit from 'p-limit';
 import { cloneDeep } from 'lodash';
 
 import { imageRequest } from './request';
-import { getCloudinaryUrl, getWebsite } from './utils';
 import { logger } from '../logger';
 
 const WEBSITE_URL = process.env.WEBSITE_URL;
 
 const svgBannerRequestLimit = pLimit(process.env.SVG_BANNER_REQUEST_CONCURRENCY || 20);
 
-const getImageUrlForUser = (user, height, options) => {
-  if (!user.image && (!user.name || user.name === 'anonymous') && !options.includeAnonymous) {
-    return null;
-  }
-
-  if (user.image && process.env.DISABLE_BANNER_INTERNAL_IMAGES) {
-    return getCloudinaryUrl(user.image, { height, style: 'rounded' });
-  }
-
-  if (user.type === 'GITHUB_USER') {
-    return `${process.env.IMAGES_URL}/github/${user.slug}/avatar/rounded/${height}.png`;
-  }
-
-  return `${process.env.IMAGES_URL}/${user.slug}/avatar/rounded/${height}.png`;
+const getImageUrlForUser = (user, height) => {
+  return `${process.env.IMAGES_URL}/github/${user.slug}/avatar/rounded/${height}.png`;
 };
 
 export function generateSvgBanner(usersList, options) {
@@ -112,7 +99,7 @@ export function generateSvgBanner(usersList, options) {
 
         const contentType = response.headers['content-type'];
 
-        const website = getWebsite(user);
+        const website = user.website;
         const base64data = Buffer.from(rawImage).toString('base64');
 
         if (imageWidth > 0 && posX + avatarWidth + margin > imageWidth) {
