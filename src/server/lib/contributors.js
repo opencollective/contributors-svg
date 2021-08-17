@@ -16,14 +16,7 @@ const queue = new PQueue({ concurrency: CONCURRENCY });
 export async function fetchContributors({ collectiveSlug }) {
   const contributors = await cache.get(`contributors_${collectiveSlug}`);
   if (contributors) {
-    return Object.keys(contributors).map((username) => {
-      return {
-        slug: username,
-        type: 'GITHUB_USER',
-        image: `https://avatars.githubusercontent.com/${username}?s=96`,
-        website: `https://github.com/${username}`,
-      };
-    });
+    return contributors;
   }
 
   // Fetch data from Open Collective API

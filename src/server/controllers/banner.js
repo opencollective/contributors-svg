@@ -25,11 +25,21 @@ export default async function banner(req, res) {
   } catch (error) {
     if (error.message.includes('No collective found')) {
       return res.status(404).send(error.message.replace('GraphQL error: ', ''));
-    }
-    if (error.message.includes('Not available')) {
+    } else if (error.message.includes('Not available')) {
       return res.status(503).send(error.message);
+    } else {
+      return res.status(500).send(error.message);
     }
   }
+
+  contributors = Object.keys(contributors).map((username) => {
+    return {
+      slug: username,
+      type: 'GITHUB_USER',
+      image: `https://avatars.githubusercontent.com/${username}?s=96`,
+      website: `https://github.com/${username}`,
+    };
+  });
 
   let buttonImage;
   if (showBtn) {
