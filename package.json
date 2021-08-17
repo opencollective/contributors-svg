@@ -30,7 +30,7 @@
     "lru-cache": "6.0.0",
     "mime-types": "2.1.32",
     "node-fetch": "2.6.1",
-    "p-limit": "3.1.0",
+    "p-limit": "4.0.0",
     "p-queue": "6.6.2",
     "redis": "3.1.2",
     "request": "2.88.2",
