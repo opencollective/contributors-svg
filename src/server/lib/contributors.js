@@ -11,10 +11,16 @@ import { sortObjectByValue } from './utils';
 
 const CONCURRENCY = 5;
 
+const IGNORE_SLUGS = (process.env.IGNORE_SLUGS || '').split(',');
+
 const queue = new PQueue({ concurrency: CONCURRENCY });
 
 export async function fetchContributors({ collectiveSlug }) {
   collectiveSlug = collectiveSlug.toLowerCase();
+
+  if (IGNORE_SLUGS.includes(collectiveSlug)) {
+    throw new Error(`No collective found with slug ${collectiveSlug} (ignored)`);
+  }
 
   const contributors = await cache.get(`contributors_${collectiveSlug}`);
   if (contributors) {
@@ -28,6 +34,7 @@ export async function fetchContributors({ collectiveSlug }) {
         id
         name
         slug
+        githubHandle
         settings
         githubContributors
       }
@@ -69,7 +76,7 @@ const updateContributors = async (collective) => {
   } else if (repo) {
     const split = repo.split('/');
     if (split.length !== 2) {
-      logger.warn(collective.name, 'Incorrect format of githubRepo');
+      logger.warn(`Invalid GitHub information (githubRepo) for collective '${collective.slug}'`);
       return;
     }
     const options = {
@@ -83,7 +90,7 @@ const updateContributors = async (collective) => {
         logger.debug(e);
       });
   } else {
-    throw new Error(`No GitHub information available for collective '${collective.slug}'`);
+    logger.warn(`No GitHub information available for collective '${collective.slug}'`);
   }
 };
 
