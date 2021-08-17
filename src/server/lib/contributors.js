@@ -63,11 +63,10 @@ const updateContributors = async (collective) => {
     queue
       .add(() => getOrgData(org).then((data) => updateCollectiveGithubData(collective, data)))
       .catch((e) => {
-        console.log(e);
         logger.error(`Error while fetching org data for collective '${collective.slug}'`);
         logger.debug(e);
       });
-  } else {
+  } else if (repo) {
     const split = repo.split('/');
     if (split.length !== 2) {
       logger.warn(collective.name, 'Incorrect format of githubRepo');
@@ -83,6 +82,8 @@ const updateContributors = async (collective) => {
         logger.error(`Error while fetching ${options.owner}/${options.repo} for collective '${collective.slug}'`);
         logger.debug(e);
       });
+  } else {
+    throw new Error(`No GitHub information available for collective '${collective.slug}'`);
   }
 };
 
