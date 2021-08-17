@@ -3,10 +3,10 @@ import path from 'path';
 import { promisify } from 'util';
 
 import debug from 'debug';
+import { get, omit } from 'lodash';
+import mime from 'mime-types';
 import fetch from 'node-fetch';
 import sharp from 'sharp';
-import mime from 'mime-types';
-import { get, omit } from 'lodash';
 
 import { logger } from '../logger';
 

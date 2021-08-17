@@ -2,8 +2,9 @@ import { createOAuthAppAuth } from '@octokit/auth-oauth-app';
 import { Octokit } from '@octokit/rest';
 import { get, has, isArray, pick } from 'lodash';
 
-import cache from './cache';
 import { logger } from '../logger';
+
+import cache from './cache';
 
 const compactRepo = (repo) => {
   repo = pick(repo, ['name', 'owner', 'stargazers_count']);
@@ -11,7 +12,7 @@ const compactRepo = (repo) => {
   return repo;
 };
 
-export function getOctokit() {
+function getOctokit() {
   const octokitParams = {};
 
   octokitParams.authStrategy = createOAuthAppAuth;
@@ -23,14 +24,14 @@ export function getOctokit() {
   return new Octokit(octokitParams);
 }
 
-export function getData(res) {
+function getData(res) {
   if (has(res, ['headers', 'x-ratelimit-remaining'])) {
     logger.debug(`RateLimit Remaining: ${get(res, ['headers', 'x-ratelimit-remaining'])}`);
   }
   return res.data;
 }
 
-export async function getAllOrganizationPublicRepos(org, accessToken) {
+async function getAllOrganizationPublicRepos(org, accessToken) {
   const cacheKey = `org_repos_all_${org}`;
   const fromCache = await cache.get(cacheKey);
   if (fromCache) {
@@ -61,25 +62,7 @@ export async function getAllOrganizationPublicRepos(org, accessToken) {
 
 const noContentToArray = (value) => (isArray(value) ? value : []);
 
-const sortObjectByValue = (obj, path) => {
-  const sortable = [];
-  for (const key in obj) {
-    sortable.push([key, obj[key], path ? get(obj[key], path) : obj[key]]);
-  }
-
-  sortable.sort((a, b) => {
-    return a[2] > b[2] ? -1 : a[2] < b[2] ? 1 : 0;
-  });
-
-  const orderedList = {};
-  for (let i = 0; i < sortable.length; i++) {
-    orderedList[sortable[i][0]] = sortable[i][1];
-  }
-
-  return orderedList;
-};
-
-export const getAllContributors = async (repo) => {
+const getAllContributors = async (repo) => {
   const cacheKey = `repos_contributors_${repo.owner}_${repo.repo}`;
   const fromCache = await cache.get(cacheKey);
   if (fromCache) {

@@ -1,12 +1,13 @@
 import gql from 'graphql-tag';
-import PQueue from 'p-queue';
 import { get } from 'lodash';
+import PQueue from 'p-queue';
+
+import { logger } from '../logger';
 
 import cache from './cache';
 import { getOrgData, getRepoData } from './github';
 import { graphqlRequest } from './graphql';
 import { sortObjectByValue } from './utils';
-import { logger } from '../logger';
 
 const CONCURRENCY = 5;
 
@@ -90,7 +91,7 @@ const updateContributors = async (collective) => {
   }
 };
 
-export const updateCollectiveGithubData = async (collective, githubData) => {
+const updateCollectiveGithubData = async (collective, githubData) => {
   const githubContributors = sortObjectByValue(githubData.contributorData);
 
   await cache.set(`contributors_${collective.slug}`, githubContributors);

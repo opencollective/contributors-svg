@@ -1,5 +1,7 @@
 import crypto from 'crypto';
 
+import { get } from 'lodash';
+
 export const queryString = {
   stringify: (obj) => {
     let str = '';

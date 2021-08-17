@@ -1,10 +1,11 @@
 import Promise from 'bluebird';
 import sizeOf from 'image-size';
-import pLimit from 'p-limit';
 import { cloneDeep } from 'lodash';
+import pLimit from 'p-limit';
+
+import { logger } from '../logger';
 
 import { imageRequest } from './request';
-import { logger } from '../logger';
 
 const WEBSITE_URL = process.env.WEBSITE_URL;
 

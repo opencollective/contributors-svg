@@ -1,11 +1,9 @@
 import debug from 'debug';
 
-import { logger } from '../logger';
-import { parseToBooleanDefaultTrue, randomInteger } from '../lib/utils';
-
-import { generateSvgBanner } from '../lib/svg-banner';
-
 import { fetchContributors } from '../lib/contributors';
+import { generateSvgBanner } from '../lib/svg-banner';
+import { parseToBooleanDefaultTrue, randomInteger } from '../lib/utils';
+import { logger } from '../logger';
 
 const imagesUrl = process.env.IMAGES_URL;
 
