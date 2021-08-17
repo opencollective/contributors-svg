@@ -8,6 +8,7 @@
   "plugins": ["graphql"],
   "rules": {
     "no-console": "warn",
+    "node/shebang": "off",
     "graphql/template-strings": [
       "error",
       { "env": "apollo", "projectName": "opencollective" },

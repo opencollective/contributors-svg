@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@hyperwatch/hyperwatch": "3.8.1",
+    "@octokit/auth-oauth-app": "4.3.0",
+    "@octokit/rest": "18.9.1",
     "apollo-boost": "0.4.9",
     "bluebird": "3.7.2",
     "cached-request": "3.0.0",
@@ -29,6 +31,7 @@
     "mime-types": "2.1.32",
     "node-fetch": "2.6.1",
     "p-limit": "3.1.0",
+    "p-queue": "6.6.2",
     "redis": "3.1.2",
     "request": "2.88.2",
     "sharp": "0.28.3",

@@ -2,8 +2,10 @@ import debug from 'debug';
 
 import { logger } from '../logger';
 import { parseToBooleanDefaultTrue, randomInteger } from '../lib/utils';
-import { fetchContributorsWithCache } from '../lib/graphql';
+
 import { generateSvgBanner } from '../lib/svg-banner';
+
+import { fetchContributors } from '../lib/contributors';
 
 const imagesUrl = process.env.IMAGES_URL;
 
@@ -19,11 +21,16 @@ export default async function banner(req, res) {
   const { avatarHeight, margin } = req.query;
   const showBtn = parseToBooleanDefaultTrue(req.query.button);
 
-  let users;
+  let contributors;
   try {
-    users = await fetchContributorsWithCache(req.params);
-  } catch (e) {
-    return res.status(404).send('Not found');
+    contributors = await fetchContributors(req.params);
+  } catch (error) {
+    if (error.message.includes('No collective found')) {
+      return res.status(404).send(error.message.replace('GraphQL error: ', ''));
+    }
+    if (error.message.includes('Not available')) {
+      return res.status(503).send(error.message);
+    }
   }
 
   let buttonImage;
@@ -35,7 +42,7 @@ export default async function banner(req, res) {
 
   const maxAge = oneDayInSeconds + randomInteger(3600);
 
-  return generateSvgBanner(users, {
+  return generateSvgBanner(contributors, {
     limit,
     buttonImage,
     width,
