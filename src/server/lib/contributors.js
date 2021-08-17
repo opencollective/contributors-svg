@@ -14,6 +14,8 @@ const CONCURRENCY = 5;
 const queue = new PQueue({ concurrency: CONCURRENCY });
 
 export async function fetchContributors({ collectiveSlug }) {
+  collectiveSlug = collectiveSlug.toLowerCase();
+
   const contributors = await cache.get(`contributors_${collectiveSlug}`);
   if (contributors) {
     return contributors;
