@@ -12,7 +12,7 @@ const debugBanner = debug('banner');
 const oneDayInSeconds = 60 * 60 * 24;
 
 export default async function banner(req, res) {
-  const { collectiveSlug, backerType } = req.params;
+  const { collectiveSlug } = req.params;
   const limit = Number(req.query.limit) || Infinity;
   const width = Number(req.query.width) || 0;
   const height = Number(req.query.height) || 0;
@@ -53,7 +53,7 @@ export default async function banner(req, res) {
     buttonImage = `${imagesUrl}/static/images/contribute.svg`;
   }
 
-  debugBanner(`generating for ${collectiveSlug} (backerType=${backerType})`);
+  debugBanner(`Generating banner for collective '${collectiveSlug}'`);
 
   const maxAge = oneDayInSeconds + randomInteger(3600);
 

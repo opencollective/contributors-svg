@@ -48,10 +48,11 @@ export async function fetchContributors({ collectiveSlug }) {
 
   // Fallback with results from Open Collective API
   if (result.Collective.githubContributors && Object.keys(result.Collective.githubContributors).length > 0) {
+    logger.warn(`Not available. Using fallback for collective '${collectiveSlug}'`);
     return result.Collective.githubContributors;
   }
 
-  throw new Error('Not available. Contributors list is being refreshed.');
+  throw new Error(`Not available. Fetching contributors for collective '${collectiveSlug}'`);
 }
 
 const updateContributors = async (collective) => {
@@ -97,7 +98,7 @@ const updateContributors = async (collective) => {
 const updateCollectiveGithubData = async (collective, githubData) => {
   const githubContributors = sortObjectByValue(githubData.contributorData);
 
-  await cache.set(`contributors_${collective.slug}`, githubContributors);
+  await cache.set(`contributors_${collective.slug}`, githubContributors, 60 * 60 * 24 /* 1 day */);
 
-  logger.info(`Successfully updated contribution data for '${collective.name}'`);
+  logger.info(`Successfully updated contributors for '${collective.slug}'`);
 };
