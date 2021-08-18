@@ -5,8 +5,6 @@ import { generateSvgBanner } from '../lib/svg-banner';
 import { parseToBooleanDefaultTrue, randomInteger } from '../lib/utils';
 import { logger } from '../logger';
 
-const imagesUrl = process.env.IMAGES_URL;
-
 const debugBanner = debug('banner');
 
 const oneDayInSeconds = 60 * 60 * 24;
@@ -50,7 +48,7 @@ export default async function banner(req, res) {
 
   let buttonImage;
   if (showBtn) {
-    buttonImage = `${imagesUrl}/static/images/contribute.svg`;
+    buttonImage = `${process.env.CONTRIBUTORS_SVG_URL}/static/images/contribute.svg`;
   }
 
   debugBanner(`Generating banner for collective '${collectiveSlug}'`);

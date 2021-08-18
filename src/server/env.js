@@ -13,6 +13,7 @@ const defaults = {
   API_URL: 'https://api-staging.opencollective.com',
   IMAGES_URL: 'http://images-staging.opencollective.com',
   WEBSITE_URL: 'https://staging.opencollective.com',
+  CONTRIBUTORS_SVG_URL: 'https://contributors-svg.opencollective.com',
   OC_APPLICATION: 'contributors-svg',
   OC_ENV: process.env.NODE_ENV || 'development',
   OC_SECRET: crypto.randomBytes(16).toString('hex'),
