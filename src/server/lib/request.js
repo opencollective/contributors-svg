@@ -28,7 +28,7 @@ export const asyncRequest = (requestOptions) => {
     'oc-env': process.env.OC_ENV,
     'oc-secret': process.env.OC_SECRET,
     'oc-application': process.env.OC_APPLICATION,
-    'user-agent': 'opencollective-images/1.0',
+    'user-agent': 'contributors-svg/1.0',
   };
   if (process.env.ENABLE_CACHED_REQUEST) {
     return cachedRequestPromise({ ttl: defaultTtl, ...requestOptions, headers });
