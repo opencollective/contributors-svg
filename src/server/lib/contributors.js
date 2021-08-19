@@ -87,7 +87,7 @@ const updateContributors = async (collective) => {
     queue
       .add(() => getOrgData(org).then((data) => updateCollectiveGithubData(collective, data)))
       .catch((e) => {
-        logger.error(`Error while fetching org data for collective '${collective.slug}'`);
+        logger.error(`Error while fetching org '${org}' for collective '${collective.slug}'`);
         logger.debug(e);
       });
   } else if (repo) {
@@ -103,7 +103,9 @@ const updateContributors = async (collective) => {
     queue
       .add(() => getRepoData(options).then((data) => updateCollectiveGithubData(collective, data)))
       .catch((e) => {
-        logger.error(`Error while fetching ${options.owner}/${options.repo} for collective '${collective.slug}'`);
+        logger.error(
+          `Error while fetching repo '${options.owner}/${options.repo}' for collective '${collective.slug}'`,
+        );
         logger.debug(e);
       });
   } else {
