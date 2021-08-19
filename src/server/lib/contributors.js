@@ -7,7 +7,7 @@ import { logger } from '../logger';
 import cache from './cache';
 import { getOrgData, getRepoData } from './github';
 import { graphqlRequest } from './graphql';
-import { sortObjectByValue } from './utils';
+import { sleep, sortObjectByValue } from './utils';
 
 const CONCURRENCY = 5;
 
@@ -22,7 +22,9 @@ export async function fetchContributors({ collectiveSlug }) {
     throw new Error(`No collective found with slug ${collectiveSlug} (ignored)`);
   }
 
-  const contributors = await cache.get(`contributors_${collectiveSlug}`);
+  const cacheKey = `contributors_${collectiveSlug}`;
+
+  const contributors = await cache.get(cacheKey);
   if (contributors) {
     return contributors;
   }
@@ -44,7 +46,21 @@ export async function fetchContributors({ collectiveSlug }) {
   const result = await graphqlRequest(query, { collectiveSlug });
 
   // Trigger Update
+  logger.info(`Triggering contributors update for '${collectiveSlug}'`);
   updateContributors(result.Collective);
+
+  // Try 30 times in 10 seconds to check if the data arrived
+  let iteration = 1;
+  while (iteration <= 30) {
+    logger.debug(`Waiting for contributors. Iteration #${iteration}`);
+    await sleep(333);
+    const contributors = await cache.get(cacheKey);
+    if (contributors) {
+      logger.info(`Available. Contributors ready for for collective '${collectiveSlug}'`);
+      return contributors;
+    }
+    iteration++;
+  }
 
   // Fallback with results from Open Collective API
   if (result.Collective.githubContributors && Object.keys(result.Collective.githubContributors).length > 0) {
