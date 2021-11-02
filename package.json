@@ -27,7 +27,7 @@
     "image-size": "1.0.0",
     "lodash": "4.17.21",
     "lru-cache": "6.0.0",
-    "mime-types": "2.1.32",
+    "mime-types": "2.1.33",
     "node-fetch": "2.6.5",
     "p-limit": "3.1.0",
     "p-queue": "6.6.2",
