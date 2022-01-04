@@ -72,12 +72,36 @@ None
 
 ### Production (heroku)
 
-```
-# Before first deployment, configure production remote
-git remote add production https://git.heroku.com/contributors-svg.git
+To deploy to staging or production, you need to be a core member of the Open Collective team.
 
-# Then deploy main with
+#### Prerequisite
+
+Install the Heroku CLI
+
+`npm install -g heroku`
+
+Login on the Heroku CLI
+
+`heroku login`
+
+Configure production remote
+
+```
+git remote add production https://git.heroku.com/contributors-svg.git
+```
+
+#### Deploy
+
+```
 npm run deploy:production
 ```
 
 - URL: https://contributors-svg.opencollective.com/
+
+## Troubleshooting
+
+### Inspecting the Redis cache (production)
+
+```
+heroku redis:cli --app contributors-svg
+```
