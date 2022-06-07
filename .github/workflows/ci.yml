@@ -29,7 +29,7 @@ jobs:
       # Npm cache
 
       - name: Restore .npm cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.npm
           key: ${{ runner.os }}-npm-cache-${{ github.sha }}
@@ -38,7 +38,7 @@ jobs:
             - ${{ runner.os }}-npm-cache-
 
       - name: Restore node_modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: node-modules
         with:
           path: node_modules
@@ -71,7 +71,7 @@ jobs:
       # Npm cache
 
       - name: Restore .npm cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.npm
           key: ${{ runner.os }}-npm-cache-${{ github.sha }}
@@ -80,7 +80,7 @@ jobs:
             - ${{ runner.os }}-npm-cache-
 
       - name: Restore node_modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: node-modules
         with:
           path: node_modules
