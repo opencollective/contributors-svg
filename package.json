@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@hyperwatch/hyperwatch": "3.8.2",
-    "@octokit/auth-oauth-app": "4.3.1",
+    "@octokit/auth-oauth-app": "4.3.4",
     "@octokit/rest": "18.12.0",
     "apollo-boost": "0.4.9",
     "bluebird": "3.7.2",
