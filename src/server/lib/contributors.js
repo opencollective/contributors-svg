@@ -32,18 +32,13 @@ export async function fetchContributors({ collectiveSlug }) {
   // Fetch data from Open Collective API
   const query = gql`
     query GithubContributors($collectiveSlug: String) {
-      collective(slug: $collectiveSlug) {
+      Collective(slug: $collectiveSlug) {
         id
         name
         slug
         githubHandle
         settings
-        contributors {
-          nodes {
-            id
-            name
-          }
-        }
+        githubContributors
       }
     }
   `;
@@ -52,7 +47,7 @@ export async function fetchContributors({ collectiveSlug }) {
 
   // Trigger Update
   logger.info(`Triggering contributors update for '${collectiveSlug}'`);
-  updateContributors(result.collective);
+  updateContributors(result.Collective);
 
   // Try 30 times in 10 seconds to check if the data arrived
   let iteration = 1;
@@ -68,9 +63,9 @@ export async function fetchContributors({ collectiveSlug }) {
   }
 
   // Fallback with results from Open Collective API
-  if (result.collective.contributors && Object.keys(result.collective.contributors).length > 0) {
+  if (result.Collective.githubContributors && Object.keys(result.Collective.githubContributors).length > 0) {
     logger.warn(`Not available. Using fallback for collective '${collectiveSlug}'`);
-    return result.collective.contributors;
+    return result.Collective.githubContributors;
   }
 
   throw new Error(`Not available. Fetching contributors for collective '${collectiveSlug}'`);
