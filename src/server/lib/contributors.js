@@ -1,4 +1,4 @@
-import { gql } from 'apollo-boost';
+import gql from 'graphql-tag';
 import { get } from 'lodash';
 import PQueue from 'p-queue';
 

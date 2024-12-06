@@ -1,4 +1,4 @@
-import ApolloClient from 'apollo-boost';
+import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client/core';
 
 import fetch from './fetch';
 
@@ -10,9 +10,21 @@ const getGraphqlUrl = ({ version = 'v1' } = {}) => {
 
 let client;
 
-function getClient() {
+function getClient({ version = 'v1' } = {}) {
   if (!client) {
-    client = new ApolloClient({ fetch, uri: getGraphqlUrl({ version: 'v1' }) });
+    client = new ApolloClient({
+      link: new HttpLink({ uri: getGraphqlUrl({ version }), fetch }),
+      cache: new InMemoryCache({
+        possibleTypes: {
+          Transaction: ['Expense', 'Order', 'Debit', 'Credit'],
+          CollectiveInterface: ['Collective', 'Event', 'Project', 'Fund', 'Organization', 'User', 'Vendor'],
+          Account: ['Collective', 'Host', 'Individual', 'Fund', 'Project', 'Bot', 'Event', 'Organization', 'Vendor'],
+          AccountWithHost: ['Collective', 'Event', 'Fund', 'Project'],
+          AccountWithParent: ['Event', 'Project'],
+          AccountWithContributions: ['Collective', 'Organization', 'Event', 'Fund', 'Project', 'Host'],
+        },
+      }),
+    });
   }
   return client;
 }

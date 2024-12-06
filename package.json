@@ -7,23 +7,24 @@
   },
   "private": true,
   "engines": {
-    "node": "^16.0.0",
-    "npm": "^6.9.0"
+    "node": "20.x",
+    "npm": "10.x"
   },
   "dependencies": {
+    "@apollo/client": "3.12.2",
     "@hyperwatch/hyperwatch": "3.8.2",
     "@octokit/auth-oauth-app": "4.3.1",
     "@octokit/rest": "18.12.0",
-    "apollo-boost": "0.4.9",
     "bluebird": "3.7.2",
     "cached-request": "3.0.0",
-    "debug": "4.3.4",
-    "dotenv": "16.0.1",
-    "express": "4.17.2",
+    "debug": "^4.3.4",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
     "express-basic-auth": "1.2.1",
     "express-winston": "4.2.0",
     "express-ws": "5.0.2",
-    "graphql": "16.5.0",
+    "graphql": "16.9.0",
+    "graphql-tag": "^2.12.6",
     "image-size": "1.0.1",
     "lodash": "4.17.21",
     "lru-cache": "7.10.1",
@@ -34,7 +35,7 @@
     "redis": "3.1.2",
     "request": "2.88.2",
     "sharp": "0.30.6",
-    "winston": "3.7.2"
+    "winston": "^3.17.0"
   },
   "scripts": {
     "start": "NODE_ENV=production node dist/server",
@@ -42,7 +43,7 @@
     "build": "npm run build:clean && npm run build:server",
     "build:clean": "rm -rf dist",
     "build:server": "babel --copy-files src --out-dir dist",
-    "lint": "eslint \"src/**/*.js\"",
+    "lint": "eslint . --ignore-path .gitignore --ignore-pattern '**/*.graphql' --ext .js,.jsx,.ts,.tsx,.graphql",
     "lint:fix": "npm run lint -- --fix",
     "lint:quiet": "npm run lint -- --quiet",
     "pretest": "npm run lint:quiet && npm run prettier:check",
@@ -57,27 +58,25 @@
     "graphql:updateV2": "npx get-graphql-schema http://localhost:3060/graphql/v2 > src/graphql/schemaV2.graphql && prettier src/graphql/schemaV2.graphql --write"
   },
   "devDependencies": {
-    "@babel/cli": "^7.14.8",
-    "@babel/core": "^7.15.0",
-    "@babel/eslint-parser": "^7.15.0",
-    "@babel/node": "^7.14.9",
-    "@babel/preset-env": "^7.15.0",
-    "babel-plugin-lodash": "^3.3.4",
+    "@babel/cli": "^7.26.4",
+    "@babel/core": "^7.26.0",
+    "@babel/eslint-parser": "^7.25.9",
+    "@babel/node": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
     "commitizen": "^4.2.4",
     "cz-conventional-changelog": "^3.3.0",
-    "eslint": "^7.32.0",
-    "eslint-config-opencollective": "^3.0.1",
+    "eslint": "^8.57.0",
+    "eslint-config-opencollective": "^4.0.0",
     "eslint-plugin-babel": "^5.3.1",
-    "eslint-plugin-graphql": "^4.0.0",
     "eslint-plugin-import": "^2.24.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-react": "^7.24.0",
-    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "eslint-plugin-simple-import-sort": "^12.1.0",
     "husky": "^4.3.8",
     "lint-staged": "^10.5.4",
     "nodemon": "^2.0.12",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.3.2"
+    "prettier": "^3.4.2"
   },
   "config": {
     "commitizen": {
