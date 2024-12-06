@@ -5,18 +5,10 @@
   "env": {
     "jest": true
   },
-  "plugins": ["graphql", "simple-import-sort"],
+  "plugins": ["simple-import-sort"],
   "rules": {
     "no-console": "warn",
     "node/shebang": "off",
-    "graphql/template-strings": [
-      "error",
-      { "env": "apollo", "projectName": "opencollective" },
-      { "env": "apollo", "tagName": "gqlV2", "projectName": "opencollectiveV2" }
-    ],
-    "graphql/named-operations": ["error"],
-    "graphql/capitalized-type-name": ["error"],
-    "graphql/no-deprecated-fields": ["warn"],
     // simple-import-sort
     "simple-import-sort/imports": [
       "error",
