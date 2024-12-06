@@ -14,13 +14,12 @@ export default async function banner(req, res) {
   const limit = Number(req.query.limit) || Infinity;
   const width = Number(req.query.width) || 0;
   const height = Number(req.query.height) || 0;
-  const skip = req.query.skip;
   const { avatarHeight, margin } = req.query;
   const showBtn = parseToBooleanDefaultTrue(req.query.button);
 
-  let skipUsers = skip || [];
-  if (!Array.isArray(skipUsers)) {
-    skipUsers = [skip];
+  let skipUsers = [];
+  if (req.query.skip) {
+    skipUsers = req.query.skip.split(',');
   }
 
   let contributors;
