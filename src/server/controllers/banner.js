@@ -17,6 +17,13 @@ export default async function banner(req, res) {
   const { avatarHeight, margin } = req.query;
   const showBtn = parseToBooleanDefaultTrue(req.query.button);
 
+  let skipUsers = [];
+  if (typeof req.query.skip === 'string') {
+    skipUsers = req.query.skip.split(',');
+  } else if (Array.isArray(req.query.skip)) {
+    skipUsers = req.query.skip;
+  }
+
   let contributors;
   try {
     contributors = await fetchContributors(req.params);
@@ -37,14 +44,16 @@ export default async function banner(req, res) {
     return res.status(code).send(message);
   }
 
-  contributors = Object.keys(contributors).map((username) => {
-    return {
-      slug: username,
-      type: 'GITHUB_USER',
-      image: `https://avatars.githubusercontent.com/${username}?s=96`,
-      website: `https://github.com/${username}`,
-    };
-  });
+  contributors = Object.keys(contributors)
+    .filter((username) => !skipUsers.includes(username))
+    .map((username) => {
+      return {
+        slug: username,
+        type: 'GITHUB_USER',
+        image: `https://avatars.githubusercontent.com/${username}?s=96`,
+        website: `https://github.com/${username}`,
+      };
+    });
 
   let buttonImage;
   if (showBtn) {
