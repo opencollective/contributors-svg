@@ -47,42 +47,38 @@ LOCAL_BRANCH="main"
 PRE_DEPLOY_BRANCH="main"
 
 GIT_LOG_FORMAT_SHELL='short'
-GIT_LOG_FORMAT_SLACK='format:<https://github.com/opencollective/opencollective-images/commit/%H|[%ci]> *%an* %n_%<(80,trunc)%s_%n'
+GIT_LOG_FORMAT_SLACK='format:<https://github.com/opencollective/contributors-svg/commit/%H|[%ci]> *%an* %n_%<(80,trunc)%s_%n'
 GIT_LOG_COMPARISON="$PRE_DEPLOY_ORIGIN/$PRE_DEPLOY_BRANCH..$LOCAL_ORIGIN/$LOCAL_BRANCH"
 
 # ---- Utils ----
 
-function confirm()
-{
+function confirm() {
   echo -n "$@"
   read -e answer
-  for response in y Y yes YES Yes Sure sure SURE OK ok Ok
-  do
-      if [ "$answer" == "$response" ]
-      then
-          return 0
-      fi
+  for response in y Y yes YES Yes Sure sure SURE OK ok Ok; do
+    if [ "$answer" == "$response" ]; then
+      return 0
+    fi
   done
 
   # Any answer other than the list above is considerred a "no" answer
   return 1
 }
 
-function exit_success()
-{
+function exit_success() {
   echo "🚀  Deploying now..."
   exit 0
 }
 
 # ---- Ensure we have a reference to the remote ----
 
-git remote add $PRE_DEPLOY_ORIGIN $DEPLOY_ORIGIN_URL &> /dev/null
+git remote add $PRE_DEPLOY_ORIGIN $DEPLOY_ORIGIN_URL &>/dev/null
 
 # ---- Show the commits about to be pushed ----
 
 # Update deploy remote
 echo "ℹ️  Fetching remote $1 state..."
-git fetch $PRE_DEPLOY_ORIGIN > /dev/null
+git fetch $PRE_DEPLOY_ORIGIN >/dev/null
 
 echo ""
 echo "-------------- New commits --------------"
@@ -108,18 +104,18 @@ if [ -z "$OC_SLACK_DEPLOY_WEBHOOK" ]; then
 fi
 
 ESCAPED_CHANGELOG=$(
-  git log --pretty="${GIT_LOG_FORMAT_SLACK}" $GIT_LOG_COMPARISON \
-  | sed 's/"/\\\\"/g'
+  git log --pretty="${GIT_LOG_FORMAT_SLACK}" $GIT_LOG_COMPARISON |
+    sed 's/"/\\\\"/g'
 )
 
 if [ ! -z "$DEPLOY_MSG" ]; then
   CUSTOM_MESSAGE="-- _$(echo $DEPLOY_MSG | sed 's/"/\\\\"/g' | sed "s/'/\\\\'/g")_"
 fi
 
-read -d '' PAYLOAD << EOF
+read -d '' PAYLOAD <<EOF
   {
     "channel": "${SLACK_CHANNEL}",
-    "text": ":rocket: Deploying *IMAGES* to *${1}* ${CUSTOM_MESSAGE}",
+    "text": ":rocket: Deploying *Contributors SVG* to *${1}* ${CUSTOM_MESSAGE}",
     "as_user": true,
     "attachments": [{
       "text": "
@@ -138,7 +134,7 @@ if [ $PUSH_TO_SLACK = "true" ]; then
     -s \
     --fail \
     "$OC_SLACK_DEPLOY_WEBHOOK" \
-    &> /dev/null
+    &>/dev/null
 
   if [ $? -ne 0 ]; then
     echo "⚠️  I won't be able to notify slack. Please do it manually and check your OC_SLACK_DEPLOY_WEBHOOK"
