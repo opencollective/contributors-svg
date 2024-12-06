@@ -18,8 +18,10 @@ export default async function banner(req, res) {
   const showBtn = parseToBooleanDefaultTrue(req.query.button);
 
   let skipUsers = [];
-  if (req.query.skip) {
+  if (typeof req.query.skip === 'string') {
     skipUsers = req.query.skip.split(',');
+  } else if (Array.isArray(req.query.skip)) {
+    skipUsers = req.query.skip;
   }
 
   let contributors;
