@@ -34,7 +34,7 @@
     "p-queue": "6.6.2",
     "redis": "3.1.2",
     "request": "2.88.2",
-    "sharp": "0.30.6",
+    "sharp": "0.33.5",
     "winston": "^3.17.0"
   },
   "scripts": {
