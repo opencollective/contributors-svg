@@ -8,7 +8,7 @@
   "plugins": ["simple-import-sort"],
   "rules": {
     "no-console": "warn",
-    "node/shebang": "off",
+    "n/shebang": "off",
     // simple-import-sort
     "simple-import-sort/imports": [
       "error",
