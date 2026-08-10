@@ -19,17 +19,17 @@ jobs:
         run: sudo apt-get install -y graphicsmagick
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: 'package.json'
 
       # Npm cache
 
       - name: Restore .npm cache
-        uses: actions/cache@v2
+        uses: actions/cache@v6
         with:
           path: ~/.npm
           key: ${{ runner.os }}-npm-cache-${{ github.sha }}
@@ -38,7 +38,7 @@ jobs:
             - ${{ runner.os }}-npm-cache-
 
       - name: Restore node_modules
-        uses: actions/cache@v2
+        uses: actions/cache@v6
         id: node-modules
         with:
           path: node_modules
@@ -61,17 +61,17 @@ jobs:
         run: sudo apt-get install -y graphicsmagick
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: 'package.json'
 
       # Npm cache
 
       - name: Restore .npm cache
-        uses: actions/cache@v2
+        uses: actions/cache@v6
         with:
           path: ~/.npm
           key: ${{ runner.os }}-npm-cache-${{ github.sha }}
@@ -80,7 +80,7 @@ jobs:
             - ${{ runner.os }}-npm-cache-
 
       - name: Restore node_modules
-        uses: actions/cache@v2
+        uses: actions/cache@v6
         id: node-modules
         with:
           path: node_modules
