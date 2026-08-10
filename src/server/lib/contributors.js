@@ -38,7 +38,6 @@ export async function fetchContributors({ collectiveSlug }) {
         slug
         githubHandle
         settings
-        githubContributors
       }
     }
   `;
