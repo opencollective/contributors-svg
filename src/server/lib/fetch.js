@@ -20,6 +20,15 @@ const getCustomAgent = () => {
   return customAgent;
 };
 
+// Fetches anything but the API: no oc-* headers, they identify this app to the API only
+export async function fetchExternal(url, options = {}) {
+  return nodeFetch(url, {
+    ...options,
+    agent: getCustomAgent(),
+    headers: { ...options.headers, 'user-agent': 'contributors-svg/1.0' },
+  });
+}
+
 async function fetch(url, options = {}) {
   options.agent = getCustomAgent();
 
