@@ -47,7 +47,6 @@
     "lint:fix": "npm run lint -- --fix",
     "lint:quiet": "npm run lint -- --quiet",
     "pretest": "npm run lint:quiet && npm run prettier:check",
-    "commit": "git-cz",
     "prettier": "prettier \"src/**/*.js\" \"test/**/*.js\"",
     "prettier:write": "npm run prettier -- --write",
     "prettier:check": "npm run prettier -- --list-different",
@@ -65,8 +64,6 @@
     "@babel/register": "^7.29.7",
     "@eslint/js": "^10.0.1",
     "@typescript-eslint/parser": "^8.71.0",
-    "commitizen": "^4.2.4",
-    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^10.12.0",
     "eslint-config-opencollective": "^7.1.1",
     "eslint-plugin-import": "^2.32.0",
@@ -81,11 +78,6 @@
     "prettier": "^3.4.2",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.71.0"
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
   },
   "nodemonConfig": {
     "watch": [
