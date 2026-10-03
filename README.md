@@ -49,7 +49,16 @@ TL;DR: we use [Prettier](https://prettier.io/) and [ESLint](https://eslint.org/)
 
 ## Tests
 
-None
+```
+npm test
+```
+
+The tests start the server from the source (`test/`, Node's test runner with `@babel/register`), without network access:
+
+- `server.test.js`: the server boots and answers, with its real controllers.
+- `routes.test.js`: what each URL routes to, with the params and query the controllers get (stubbed controllers).
+
+CI also builds the production bundle and checks that `npm start` answers.
 
 ## Deployment
 
