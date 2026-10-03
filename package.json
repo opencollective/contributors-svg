@@ -26,7 +26,7 @@
     "graphql": "16.14.2",
     "graphql-tag": "^2.12.6",
     "image-size": "1.2.1",
-    "lodash": "4.17.21",
+    "lodash": "4.18.1",
     "lru-cache": "7.18.3",
     "mime-types": "2.1.35",
     "node-fetch": "2.7.0",
@@ -34,7 +34,7 @@
     "p-queue": "6.6.2",
     "redis": "3.1.2",
     "request": "2.88.2",
-    "sharp": "0.35.3",
+    "sharp": "0.35.5",
     "winston": "^3.17.0"
   },
   "scripts": {
@@ -68,14 +68,15 @@
     "eslint-config-opencollective": "^4.0.0",
     "eslint-plugin-babel": "^5.3.1",
     "eslint-plugin-import": "^2.24.0",
-    "eslint-plugin-n": "17.14.0",
+    "eslint-plugin-n": "17.24.0",
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-simple-import-sort": "^12.1.0",
     "husky": "^4.3.8",
     "lint-staged": "^10.5.4",
     "nodemon": "^2.0.12",
-    "npm-run-all2": "5.0.0",
-    "prettier": "^3.4.2"
+    "npm-run-all2": "5.0.2",
+    "prettier": "^3.4.2",
+    "typescript": "^5.9.3"
   },
   "config": {
     "commitizen": {
