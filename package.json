@@ -58,11 +58,11 @@
     "test": "node --test \"test/**/*.test.js\""
   },
   "devDependencies": {
-    "@babel/cli": "^7.26.4",
-    "@babel/core": "^7.26.0",
-    "@babel/node": "^7.26.0",
-    "@babel/preset-env": "^7.26.0",
-    "@babel/register": "^7.29.7",
+    "@babel/cli": "^8.0.0",
+    "@babel/core": "^8.0.0",
+    "@babel/node": "^8.0.0",
+    "@babel/preset-env": "^8.0.0",
+    "@babel/register": "^8.0.6",
     "@eslint/js": "^10.0.1",
     "@typescript-eslint/parser": "^8.71.0",
     "commitizen": "^4.2.4",
