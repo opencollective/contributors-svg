@@ -10,14 +10,9 @@ If you see a step below that could be improved (or is outdated), please update t
 
 ### Prerequisite
 
-1. Make sure you have Node.js version >= 14. We recommend using version 14, the one used in CI and production.
+1. Make sure you have Node.js version 24 and npm 11, the ones used in CI and production.
 
 - We recommend using [nvm](https://github.com/creationix/nvm): `nvm install && nvm use`.
-
-2. Make sure you have [GraphicsMagick](http://www.graphicsmagick.org) installed.
-
-- On Debian/Ubuntu: `sudo apt-get install graphicsmagick`
-- On MacOS (with [Homebrew](https://brew.sh/)): `brew install graphicsmagick`
 
 ### Install
 
@@ -60,11 +55,7 @@ None
 
 To deploy to staging or production, you need to be a core member of the Open Collective team.
 
-We're currently relying on the following Heroku buildpacks:
-
-- https://github.com/heroku/heroku-buildpack-apt
-- https://github.com/MikeKoval/heroku-buildpack-graphicsmagick
-- heroku/nodejs
+We're currently relying on the `heroku/nodejs` buildpack.
 
 ### Staging
 
