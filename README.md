@@ -58,7 +58,7 @@ The tests start the server from the source (`test/`, Node's test runner with `@b
 - `server.test.js`: the server boots and answers, with its real controllers.
 - `routes.test.js`: what each URL routes to, with the params and query the controllers get (stubbed controllers).
 
-CI also builds the production bundle and checks that `npm start` answers.
+CI also builds the production bundle and checks that `npm start` answers, with production dependencies only (as on Heroku).
 
 ## Deployment
 

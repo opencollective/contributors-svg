@@ -165,9 +165,15 @@ jobs:
 
       - run: npm run build
 
-      # The tests run the source: also check that the production build starts and answers
+      # The tests run the source: also check that the production build starts and answers, with
+      # production dependencies only (Heroku prunes devDependencies after the build). In a copy,
+      # to keep the cached node_modules intact.
       - name: Start the production build
         run: |
+          mkdir ../production
+          cp -R dist package.json package-lock.json .npmrc ../production/
+          cd ../production
+          npm ci --omit=dev --ignore-scripts --no-audit
           PORT=3000 npm start > server.log 2>&1 &
           for i in $(seq 1 30); do
             if curl -sf http://localhost:3000/robots.txt > /dev/null; then
