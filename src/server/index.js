@@ -14,6 +14,9 @@ const port = process.env.PORT;
 const app = express();
 const server = http.createServer(app);
 
+// Express 5 defaults to the 'simple' query parser: keep Express 4's (qs), e.g. for ?skip[]=
+app.set('query parser', 'extended');
+
 app.use('/static', express.static(path.join(__dirname, '..', 'static')));
 
 hyperwatch.load(app, { server });

@@ -21,12 +21,17 @@ export const loadRoutes = (app) => {
     }
   });
 
+  // Express 5 (path-to-regexp v8) dropped optional and regex-constrained params from string patterns.
+  // These routes keep the exact Express 4 matching with regular expressions; named groups populate
+  // req.params like before. The `i` flag and the optional trailing slash mirror Express's default
+  // case-insensitive, non-strict routing.
+
   // Special route for GitHub avatars
   app.get(
-    '/github/:githubUsername/:image(avatar)/:style(rounded|square)?/:height?.:format(png)',
+    /^\/github\/(?<githubUsername>[^/]+?)\/(?<image>avatar)(?:\/(?<style>rounded|square))?(?:\/(?<height>[^/]+?))?\.(?<format>png)\/?$/i,
     maxAgeOneDay,
     controllers.logo,
   );
 
-  app.get('/:collectiveSlug/:backerType(contributors).svg', controllers.banner);
+  app.get(/^\/(?<collectiveSlug>[^/]+?)\/(?<backerType>contributors)\.svg\/?$/i, controllers.banner);
 };
