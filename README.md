@@ -14,11 +14,6 @@ If you see a step below that could be improved (or is outdated), please update t
 
 - We recommend using [nvm](https://github.com/creationix/nvm): `nvm install && nvm use`.
 
-2. Make sure you have [GraphicsMagick](http://www.graphicsmagick.org) installed.
-
-- On Debian/Ubuntu: `sudo apt-get install graphicsmagick`
-- On MacOS (with [Homebrew](https://brew.sh/)): `brew install graphicsmagick`
-
 ### Install
 
 We recommend cloning the repository in a folder dedicated to `opencollective` projects.
@@ -60,11 +55,7 @@ None
 
 To deploy to staging or production, you need to be a core member of the Open Collective team.
 
-We're currently relying on the following Heroku buildpacks:
-
-- https://github.com/heroku/heroku-buildpack-apt
-- https://github.com/MikeKoval/heroku-buildpack-graphicsmagick
-- heroku/nodejs
+We're currently relying on the `heroku/nodejs` buildpack.
 
 ### Staging
 
