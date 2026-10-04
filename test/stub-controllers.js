@@ -4,7 +4,14 @@ const path = require('node:path');
 
 const controllersPath = path.join(__dirname, '..', 'src', 'server', 'controllers', 'index.js');
 
-const echo = (controller) => (req, res) => res.json({ controller, params: { ...req.params }, query: req.query });
+const echo = (controller) => async (req, res) => {
+  // An error thrown by an async controller, to test the error handling
+  if (req.params.collectiveSlug === 'async-error') {
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    throw new Error('Async controller error');
+  }
+  res.json({ controller, params: { ...req.params }, query: req.query });
+};
 
 require.cache[controllersPath] = {
   id: controllersPath,
