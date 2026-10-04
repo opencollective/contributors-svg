@@ -23,11 +23,9 @@ const requestPromise = async (options) => {
   });
 };
 
+// Fetches images (our own avatar route), not the API: no oc-* headers, oc-secret is only for the API
 export const asyncRequest = (requestOptions) => {
   const headers = {
-    'oc-env': process.env.OC_ENV,
-    'oc-secret': process.env.OC_SECRET,
-    'oc-application': process.env.OC_APPLICATION,
     'user-agent': 'contributors-svg/1.0',
   };
   if (process.env.ENABLE_CACHED_REQUEST) {
