@@ -1,0 +1,41 @@
+// Express behaviors the app relies on beyond routing (see routes.test.js), with stubbed controllers
+const assert = require('node:assert/strict');
+const path = require('node:path');
+const { after, before, test } = require('node:test');
+
+const { startServer } = require('./helpers');
+
+let server;
+
+before(async () => {
+  server = await startServer({ preload: [path.join(__dirname, 'stub-controllers.js')] });
+});
+
+after(() => server?.stop());
+
+test('an error thrown by an async controller answers 500, the server keeps running', async () => {
+  const res = await fetch(`${server.url}/async-error/contributors.svg`, { signal: AbortSignal.timeout(5000) });
+  assert.equal(res.status, 500);
+  const next = await fetch(`${server.url}/babel/contributors.svg`);
+  assert.equal(next.status, 200);
+});
+
+test('HEAD requests are answered by GET routes, without a body', async () => {
+  for (const url of ['/', '/robots.txt', '/babel/contributors.svg', '/static/images/contribute.svg']) {
+    const res = await fetch(`${server.url}${url}`, { method: 'HEAD' });
+    assert.equal(res.status, 200, url);
+    assert.equal((await res.arrayBuffer()).byteLength, 0, url);
+  }
+});
+
+test('static files: no path traversal', async () => {
+  for (const url of ['/static/../package.json', '/static/%2e%2e/package.json', '/static/..%2fpackage.json']) {
+    const res = await fetch(`${server.url}${url}`);
+    assert.equal(res.status, 404, url);
+  }
+});
+
+test('static files: unknown file 404, POST not allowed on routes', async () => {
+  assert.equal((await fetch(`${server.url}/static/images/nope.svg`)).status, 404);
+  assert.equal((await fetch(`${server.url}/babel/contributors.svg`, { method: 'POST' })).status, 404);
+});
