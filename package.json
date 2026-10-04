@@ -30,7 +30,7 @@
     "mime-types": "3.0.2",
     "node-fetch": "2.7.0",
     "p-limit": "3.1.0",
-    "p-queue": "6.6.2",
+    "p-queue": "9.3.3",
     "redis": "3.1.2",
     "request": "2.88.2",
     "sharp": "0.35.5",
