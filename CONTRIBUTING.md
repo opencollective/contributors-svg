@@ -17,14 +17,7 @@ For the long run, we suggest to integrate these tools in your favorite code edit
 
 ## Commit convention
 
-Your commit messages should conform to the [Angular convention](https://github.com/conventional-changelog/conventional-changelog/blob/master/packages/conventional-changelog-angular/README.md).
-
-To help you follow this convention, this project is using [commitizen](https://github.com/commitizen/cz-cli). To use it:
-
-1. run `git add` first to add your changes to Git staging area
-2. use `npm run commit` to commit
-
-Note: it's not mandatory to always commit with this tool (we don't), but it's great to get introduced to the commit conventions.
+Your commit messages should follow [Conventional Commits](https://www.conventionalcommits.org/): `feat`, `fix`, `chore`… with a short title, e.g. `fix(banner): crash with an empty contributors list`.
 
 ## Git guidelines
 
