@@ -116,39 +116,46 @@ fi
 # After `heroku rollback`, the app runs an older release while Heroku's git
 # main stays at the last push: the changelog would start from the wrong
 # commit, and pushing the same main wouldn't redeploy anything. The running
-# commit is the one of the "Deploy <sha>" release that built the current slug
-if command -v heroku > /dev/null; then
-  RUNNING=$(
-    heroku releases -a "$HEROKU_APP" -n 100 --json 2> /dev/null | node -e '
-      let data = "";
-      process.stdin.on("data", (chunk) => (data += chunk)).on("end", () => {
-        try {
-          const releases = JSON.parse(data);
-          const current = releases.find((release) => release.current);
-          const deploy = releases.find(
-            (release) =>
-              current && release.slug && current.slug &&
-              release.slug.id === current.slug.id &&
-              /^Deploy [0-9a-f]+$/.test(release.description)
-          );
-          console.log(deploy ? deploy.description.split(" ")[1] : "");
-        } catch (err) {}
-      });
-    '
-  )
-  if [ -z "$RUNNING" ]; then
-    # Not in the last 100 releases (rolled back far), or the CLI failed:
-    # assuming Heroku's main could deploy from the wrong state
-    echo "⚠️  Couldn't find the commit $HEROKU_APP runs (see \`heroku releases -a $HEROKU_APP\`): not deploying."
-    exit 1
-  elif [[ "$REMOTE_OID" != "$RUNNING"* ]]; then
-    echo "⚠️  $HEROKU_APP runs $RUNNING (rolled back?), not ${REMOTE_OID:0:8} from Heroku's main: not deploying."
-    echo "   Roll forward with \`heroku rollback -a $HEROKU_APP <version>\`, or push explicitly."
-    exit 1
+# commit is the one of the "Deploy <sha>" release that built the current slug.
+# Checked before the confirmation, and again right before the push: a rollback
+# made meanwhile would otherwise be overridden by this deploy
+function check_not_rolled_back()
+{
+  if command -v heroku > /dev/null; then
+    RUNNING=$(
+      heroku releases -a "$HEROKU_APP" -n 100 --json 2> /dev/null | node -e '
+        let data = "";
+        process.stdin.on("data", (chunk) => (data += chunk)).on("end", () => {
+          try {
+            const releases = JSON.parse(data);
+            const current = releases.find((release) => release.current);
+            const deploy = releases.find(
+              (release) =>
+                current && release.slug && current.slug &&
+                release.slug.id === current.slug.id &&
+                /^Deploy [0-9a-f]+$/.test(release.description)
+            );
+            console.log(deploy ? deploy.description.split(" ")[1] : "");
+          } catch (err) {}
+        });
+      '
+    )
+    if [ -z "$RUNNING" ]; then
+      # Not in the last 100 releases (rolled back far), or the CLI failed:
+      # assuming Heroku's main could deploy from the wrong state
+      echo "⚠️  Couldn't find the commit $HEROKU_APP runs (see \`heroku releases -a $HEROKU_APP\`): not deploying."
+      exit 1
+    elif [[ "$REMOTE_OID" != "$RUNNING"* ]]; then
+      echo "⚠️  $HEROKU_APP runs $RUNNING (rolled back?), not ${REMOTE_OID:0:8} from Heroku's main: not deploying."
+      echo "   Roll forward with \`heroku rollback -a $HEROKU_APP <version>\`, or push explicitly."
+      exit 1
+    fi
+  else
+    echo "ℹ️  No heroku CLI: can't check whether $DEPLOY_ENV was rolled back."
   fi
-else
-  echo "ℹ️  No heroku CLI: can't check whether $1 was rolled back."
-fi
+}
+
+check_not_rolled_back
 
 if [ "$LOCAL_OID" == "$REMOTE_OID" ]; then
   echo "ℹ️  $1 already has $LOCAL_BRANCH (${LOCAL_OID:0:8}): nothing to deploy."
@@ -235,5 +242,6 @@ else
   fi
 fi
 
-# Deploy even if the Slack notification failed
+# Deploy even if the Slack notification failed, unless a rollback happened meanwhile
+check_not_rolled_back
 deploy
