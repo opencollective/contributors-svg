@@ -13,6 +13,16 @@ const {
 } = process.env;
 
 export function load(app, { server }) {
+  if (!parseToBooleanDefaultFalse(enabled)) {
+    return;
+  }
+
+  // Never run Hyperwatch (logs with client IPs and URLs) without authentication
+  if (!secret) {
+    logger.warn('Hyperwatch: HYPERWATCH_SECRET is not set, Hyperwatch is disabled');
+    return;
+  }
+
   const { input, lib, modules, pipeline } = hyperwatch;
 
   hyperwatch.init({
@@ -24,37 +34,32 @@ export function load(app, { server }) {
     },
   });
 
-  // Mount Hyperwatch API and Websocket
-  if (parseToBooleanDefaultFalse(enabled)) {
-    // Basic auth applies to both HTTP requests and WebSocket upgrades
-    if (secret) {
-      hyperwatch.app.mount(app, {
-        server,
-        path: path || '/_hyperwatch',
-        middleware: expressBasicAuth({
-          users: { [username || 'opencollective']: secret },
-          challenge: true,
-        }),
-      });
-    }
+  // Mount Hyperwatch API and Websocket: basic auth applies to both HTTP requests and WebSocket upgrades
+  hyperwatch.app.mount(app, {
+    server,
+    path: path || '/_hyperwatch',
+    middleware: expressBasicAuth({
+      users: { [username || 'opencollective']: secret },
+      challenge: true,
+    }),
+  });
 
-    // Configure input
+  // Configure input
 
-    const expressInput = input.express.create();
+  const expressInput = input.express.create();
 
-    app.use(expressInput.middleware());
+  app.use(expressInput.middleware());
 
-    pipeline.registerInput(expressInput);
+  pipeline.registerInput(expressInput);
 
-    // Configure access Logs in dev and production
+  // Configure access Logs in dev and production
 
-    const consoleLogOutput = process.env.NODE_ENV === 'development' ? 'console' : 'text';
-    pipeline.map((log) => logger.info(lib.logger.defaultFormatter.format(log, consoleLogOutput)));
+  const consoleLogOutput = process.env.NODE_ENV === 'development' ? 'console' : 'text';
+  pipeline.map((log) => logger.info(lib.logger.defaultFormatter.format(log, consoleLogOutput)));
 
-    // Start
+  // Start
 
-    modules.start();
+  modules.start();
 
-    pipeline.start();
-  }
+  pipeline.start();
 }
