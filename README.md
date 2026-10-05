@@ -68,7 +68,7 @@ We're currently relying on the `heroku/nodejs` buildpack.
 
 ### (Optional) Configure Slack token
 
-Setting a Slack webhook will post a message on `#engineering` with the changes you're
+Setting a Slack webhook will post a message on `#deployments` with the changes you're
 about to deploy. It is not required, but you can activate it by adding it to your `.env` file:
 
 ```bash
