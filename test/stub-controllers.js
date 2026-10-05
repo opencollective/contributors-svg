@@ -10,7 +10,7 @@ const echo = (controller) => async (req, res) => {
     await new Promise((resolve) => setTimeout(resolve, 10));
     throw new Error('Async controller error');
   }
-  res.json({ controller, params: { ...req.params }, query: req.query });
+  res.json({ controller, params: { ...req.params }, query: req.query, ip: req.ip });
 };
 
 require.cache[controllersPath] = {

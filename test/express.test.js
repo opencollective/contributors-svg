@@ -39,3 +39,15 @@ test('static files: unknown file 404, POST not allowed on routes', async () => {
   assert.equal((await fetch(`${server.url}/static/images/nope.svg`)).status, 404);
   assert.equal((await fetch(`${server.url}/babel/contributors.svg`, { method: 'POST' })).status, 404);
 });
+
+test('client IP: X-Forwarded-For is trusted through Cloudflare and private proxies only', async () => {
+  const ip = async (forwardedFor) => {
+    const res = await fetch(`${server.url}/babel/contributors.svg`, { headers: { 'x-forwarded-for': forwardedFor } });
+    return (await res.json()).ip;
+  };
+  // client, Cloudflare, Heroku router (private network); the test connects from loopback
+  assert.equal(await ip('203.0.113.7, 173.245.48.1, 10.1.2.3'), '203.0.113.7');
+  assert.equal(await ip('203.0.113.7, 2606:4700::1'), '203.0.113.7');
+  // An address outside Cloudflare's ranges in the chain is the client: anything before it could be spoofed
+  assert.equal(await ip('203.0.113.7, 198.51.100.9'), '198.51.100.9');
+});
