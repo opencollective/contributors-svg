@@ -1,41 +1,64 @@
-import Promise from 'bluebird';
-import cachedRequestLib from 'cached-request';
-import request from 'request';
+import crypto from 'crypto';
+import fs from 'fs/promises';
+import path from 'path';
 
-const cachedRequest = cachedRequestLib(request);
-cachedRequest.setCacheDirectory('/tmp');
+import { fetchExternal } from './fetch';
 
+const CACHE_DIR = '/tmp/cached-requests';
 const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
 
-const defaultTtl = oneDayInMilliseconds;
-
-const cachedRequestPromise = Promise.promisify(cachedRequest, { multiArgs: true });
-
-const requestPromise = async (options) => {
-  return new Promise((resolve, reject) => {
-    request(options, (error, response, body) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve([response, body]);
-      }
-    });
-  });
+const getCachePath = (url) => {
+  const hash = crypto.createHash('sha256').update(url).digest('hex');
+  return path.join(CACHE_DIR, hash);
 };
 
-// Fetches images (our own avatar route), not the API: no oc-* headers, oc-secret is only for the API
-export const asyncRequest = (requestOptions) => {
-  const headers = {
-    'user-agent': 'contributors-svg/1.0',
-  };
-  if (process.env.ENABLE_CACHED_REQUEST) {
-    return cachedRequestPromise({ ttl: defaultTtl, ...requestOptions, headers });
-  } else {
-    return requestPromise({ ...requestOptions, headers });
+const readCache = async (url) => {
+  try {
+    const filePath = getCachePath(url);
+    const stat = await fs.stat(filePath);
+    if (Date.now() - stat.mtimeMs > oneDayInMilliseconds) {
+      await fs.unlink(filePath);
+      return null;
+    }
+    const cached = JSON.parse(await fs.readFile(filePath, 'utf8'));
+    cached.body = Buffer.from(cached.body, 'base64');
+    return cached;
+  } catch {
+    return null;
   }
 };
 
-export const imageRequest = (url) =>
-  asyncRequest({ url, encoding: null }).then(([response]) => {
-    return response;
-  });
+const writeCache = async (url, response) => {
+  try {
+    await fs.mkdir(CACHE_DIR, { recursive: true });
+    await fs.writeFile(getCachePath(url), JSON.stringify({ ...response, body: response.body.toString('base64') }));
+  } catch {
+    // Silently ignore cache write failures
+  }
+};
+
+// Fetches an image (our own avatar route, the contribute button): `{ statusCode, headers, body }`
+// with a Buffer body. Successful responses are cached on disk for a day when ENABLE_CACHED_REQUEST
+// is set, like cached-request did.
+export const imageRequest = async (url) => {
+  if (process.env.ENABLE_CACHED_REQUEST) {
+    const cached = await readCache(url);
+    if (cached) {
+      return cached;
+    }
+  }
+
+  const fetchResponse = await fetchExternal(url);
+  const response = {
+    statusCode: fetchResponse.status,
+    statusMessage: fetchResponse.statusText,
+    headers: Object.fromEntries(fetchResponse.headers.entries()),
+    body: Buffer.from(await fetchResponse.arrayBuffer()),
+  };
+
+  if (process.env.ENABLE_CACHED_REQUEST && fetchResponse.ok) {
+    await writeCache(url, response);
+  }
+
+  return response;
+};

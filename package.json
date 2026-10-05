@@ -16,7 +16,6 @@
     "@octokit/auth-oauth-app": "9.0.5",
     "@octokit/rest": "22.0.1",
     "bluebird": "3.7.2",
-    "cached-request": "3.0.0",
     "debug": "^4.3.4",
     "dotenv": "^18.0.0",
     "express": "^5.0.0",
@@ -32,7 +31,6 @@
     "p-limit": "3.1.0",
     "p-queue": "9.3.3",
     "redis": "3.1.2",
-    "request": "2.88.2",
     "sharp": "0.35.5",
     "winston": "^3.17.0"
   },
