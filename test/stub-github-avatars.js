@@ -18,7 +18,9 @@ const fetch = async (url) => {
     return { ok: false, status: 404, statusText: 'Not Found' };
   }
   const body = await avatar;
-  return { ok: true, status: 200, statusText: 'OK', buffer: async () => body };
+  // Only the standard Body methods: node-fetch 3 deprecates response.buffer()
+  const arrayBuffer = async () => body.buffer.slice(body.byteOffset, body.byteOffset + body.byteLength);
+  return { ok: true, status: 200, statusText: 'OK', arrayBuffer };
 };
 
 require.cache[nodeFetchPath] = {

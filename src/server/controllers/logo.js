@@ -71,7 +71,7 @@ export default async function logo(req, res) {
             }
             return res.status(response.status).send(response.statusText);
           }
-          image = await response.buffer();
+          image = Buffer.from(await response.arrayBuffer());
           if (image.byteLength === 0) {
             logger.error(`logo: error processing ${imageUrl} (Invalid Image)`);
             return res.status(400).send('Invalid Image');
