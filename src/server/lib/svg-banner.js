@@ -8,7 +8,7 @@ import { imageRequest } from './request';
 
 const WEBSITE_URL = process.env.WEBSITE_URL;
 
-const svgBannerRequestLimit = pLimit(process.env.SVG_BANNER_REQUEST_CONCURRENCY || 20);
+const svgBannerRequestLimit = pLimit(Number(process.env.SVG_BANNER_REQUEST_CONCURRENCY || 20));
 
 const getImageUrlForUser = (user, height) => {
   return `${process.env.CONTRIBUTORS_SVG_URL}/github/${user.slug}/avatar/rounded/${height}.png`;
