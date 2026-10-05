@@ -62,9 +62,18 @@ CI also builds the production bundle and checks that `npm start` answers, with p
 
 ## Deployment
 
-To deploy to staging or production, you need to be a core member of the Open Collective team.
+To deploy to production, you need to be a core member of the Open Collective team.
 
 We're currently relying on the `heroku/nodejs` buildpack.
+
+### (Optional) Configure Slack token
+
+Setting a Slack webhook will post a message on `#engineering` with the changes you're
+about to deploy. It is not required, but you can activate it by adding it to your `.env` file:
+
+```bash
+OC_SLACK_DEPLOY_WEBHOOK=https://hooks.slack.com/services/....
+```
 
 ### Staging
 
@@ -72,31 +81,19 @@ None
 
 ### Production (heroku)
 
-To deploy to staging or production, you need to be a core member of the Open Collective team.
+Install the Heroku CLI (`npm install -g heroku`) and log in (`heroku login`): the deploy uses it to
+check that the app wasn't rolled back.
 
-#### Prerequisite
-
-Install the Heroku CLI
-
-`npm install -g heroku`
-
-Login on the Heroku CLI
-
-`heroku login`
-
-Configure production remote
-
-```
-git remote add production https://git.heroku.com/contributors-svg.git
-```
-
-#### Deploy
-
-```
+```bash
 npm run deploy:production
 ```
 
-- URL: https://contributors-svg.opencollective.com/
+`scripts/deploy.sh` shows the commits about to be deployed, asks for confirmation, then pushes the
+local `main` commit it showed. It adds a `predeploy-production` remote the first time. It stops if
+production has commits `main` lacks, or runs another commit than Heroku's `main` (after a
+`heroku rollback`).
+
+URL: https://contributors-svg.opencollective.com/
 
 ## Troubleshooting
 

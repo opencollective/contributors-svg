@@ -48,7 +48,7 @@
     "prettier": "prettier \"src/**/*.js\" \"test/**/*.js\"",
     "prettier:write": "npm run prettier -- --write",
     "prettier:check": "npm run prettier -- --list-different",
-    "deploy:production": "./scripts/pre-deploy.sh production && git push production main",
+    "deploy:production": "./scripts/deploy.sh production",
     "graphql:update": "npm run graphql:updateV1 && npm run graphql:updateV2",
     "graphql:updateV1": "npx get-graphql-schema http://localhost:3060/graphql > src/graphql/schema.graphql && prettier src/graphql/schema.graphql --write",
     "graphql:updateV2": "npx get-graphql-schema http://localhost:3060/graphql/v2 > src/graphql/schemaV2.graphql && prettier src/graphql/schemaV2.graphql --write",
