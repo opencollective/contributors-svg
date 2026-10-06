@@ -1,23 +1,28 @@
-import Promise from 'bluebird';
 import debug from 'debug';
-import redis from 'redis';
+import { createClient } from 'redis';
 
-const asyncRedis = Promise.promisifyAll(redis);
+import { logger } from '../../logger';
 
 const debugCache = debug('cache');
 
 const makeRedisProvider = ({ serverUrl }) => {
   serverUrl = serverUrl.replace('://h:', '://:'); // Remove fake username that used to be added by Heroku
-  const redisOptions = {};
+  const options = { url: serverUrl };
   if (serverUrl.includes('rediss://')) {
-    redisOptions.tls = { rejectUnauthorized: false };
+    // Heroku Redis uses a self-signed certificate
+    options.socket = { tls: true, rejectUnauthorized: false };
   }
-  const client = asyncRedis.createClient(serverUrl, redisOptions);
+  const client = createClient(options);
+  // Without a listener, a connection error would crash the process. The client reconnects on its own.
+  client.on('error', (err) => logger.warn(`Redis error: ${err.message || err.code}`));
+  // Commands sent before the connection is ready are queued
+  client.connect().catch((err) => logger.error(`Redis connection failed: ${err.message}`));
+
   return {
-    clear: async () => client.flushallAsync(),
-    del: async (key) => client.delAsync(key),
+    clear: async () => client.flushAll(),
+    del: async (key) => client.del(key),
     get: async (key, { unserialize = JSON.parse } = {}) => {
-      const value = await client.getAsync(key);
+      const value = await client.get(key);
       if (value) {
         try {
           return unserialize(value);
@@ -29,18 +34,19 @@ const makeRedisProvider = ({ serverUrl }) => {
       }
     },
     has: async (key) => {
-      const value = await client.getAsync(key);
+      const value = await client.get(key);
       return value !== null;
     },
     set: async (key, value, expirationInSeconds, { serialize = JSON.stringify } = {}) => {
       if (value !== undefined) {
         if (expirationInSeconds) {
-          return client.setexAsync(key, expirationInSeconds, serialize(value));
+          return client.set(key, serialize(value), { EX: expirationInSeconds });
         } else {
-          return client.setAsync(key, serialize(value));
+          return client.set(key, serialize(value));
         }
       }
     },
+    quit: async () => client.quit(),
   };
 };
 
