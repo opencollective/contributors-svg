@@ -1,4 +1,4 @@
-import { gql } from 'graphql-tag';
+import gqlV1 from 'graphql-tag';
 import { get } from 'lodash';
 import PQueue from 'p-queue';
 
@@ -30,7 +30,7 @@ export async function fetchContributors({ collectiveSlug }) {
   }
 
   // Fetch data from Open Collective API
-  const query = gql`
+  const query = gqlV1 /* GraphQL */ `
     query GithubContributors($collectiveSlug: String) {
       Collective(slug: $collectiveSlug) {
         id

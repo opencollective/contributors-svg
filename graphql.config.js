@@ -1,8 +1,7 @@
 module.exports = {
   projects: {
     default: {
-      schema: 'lib/graphql/schemaV2.graphql',
-      documents: ['pages/**/*.(ts|tsx)', 'components/**/*.(ts|tsx)'],
+      schema: 'src/graphql/schemaV2.graphql',
       extensions: {
         endpoints: {
           dev: 'http://localhost:3060/graphql/v2',
@@ -10,17 +9,13 @@ module.exports = {
         },
         pluckConfig: {
           globalGqlIdentifierName: 'gql',
-          gqlMagicComment: 'GraphQLV2',
         },
       },
     },
     graphqlV1: {
-      schema: 'lib/graphql/schema.graphql',
-      documents: [
-        // The following documents only use gqlV1
-        //  grep -rl " gqlV1/" ./components ./lib ./pages | xargs grep -rL "gql\`" | sort
-        'src/server/lib/contributors.js',
-      ],
+      schema: 'src/graphql/schema.graphql',
+      // Files that only use `gqlV1`; everything else is checked against the V2 schema
+      documents: ['src/server/lib/contributors.js', 'test/graphql.test.js'],
       extensions: {
         endpoints: {
           dev: 'http://localhost:3060/graphql/v1',
@@ -28,7 +23,6 @@ module.exports = {
         },
         pluckConfig: {
           globalGqlIdentifierName: 'gqlV1',
-          gqlMagicComment: 'GraphQL',
         },
       },
     },

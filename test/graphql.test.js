@@ -6,7 +6,7 @@ const assert = require('node:assert/strict');
 const http = require('node:http');
 const { after, before, beforeEach, test } = require('node:test');
 
-const { gql } = require('graphql-tag');
+const gqlV1 = require('graphql-tag').default;
 
 const { graphqlRequest } = require('../src/server/lib/graphql');
 
@@ -40,7 +40,7 @@ beforeEach(() => {
   requests.length = 0;
 });
 
-const query = gql`
+const query = gqlV1 /* GraphQL */ `
   query GithubContributors($collectiveSlug: String) {
     Collective(slug: $collectiveSlug) {
       id
@@ -80,7 +80,7 @@ test('resolves fragments on interfaces (possibleTypes)', async () => {
   respond = () => ({ data: { Collective: collective } });
 
   const data = await graphqlRequest(
-    gql`
+    gqlV1 /* GraphQL */ `
       query Collective($collectiveSlug: String) {
         Collective(slug: $collectiveSlug) {
           id
