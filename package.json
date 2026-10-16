@@ -29,7 +29,7 @@
     "mime-types": "3.0.2",
     "node-fetch": "3.3.2",
     "p-limit": "7.3.3",
-    "p-queue": "9.3.5",
+    "p-queue": "10.0.0",
     "redis": "6.3.0",
     "rxjs": "^7.8.2",
     "sharp": "0.35.5",
