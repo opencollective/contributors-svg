@@ -44,7 +44,11 @@ export default async function banner(req, res) {
     return res.status(code).send(message);
   }
 
-  contributors = Object.keys(contributors)
+  // Sort again by contributions: an object always lists integer-like keys (e.g. the GitHub login
+  // "2428513107") first, so the order of the cached object can't be trusted
+  contributors = Object.entries(contributors)
+    .sort(([, a], [, b]) => b - a)
+    .map(([username]) => username)
     .filter((username) => !skipUsers.includes(username))
     .map((username) => {
       return {
