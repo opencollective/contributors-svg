@@ -92,3 +92,56 @@ test('unknown slug: fails with the API error, without fetching GitHub', async ()
   assert.deepEqual(calls.org, []);
   assert.deepEqual(calls.repo, []);
 });
+
+const cache = require('../src/server/lib/cache').default;
+
+const DAY = 24 * 60 * 60 * 1000;
+
+const waitFor = async (check) => {
+  for (let i = 0; i < 50; i++) {
+    if (await check()) {
+      return;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 20));
+  }
+  throw new Error('Timed out');
+};
+
+test('fresh entry: served without calling the API', async () => {
+  collectives.fresh = { id: 3, slug: 'fresh', githubHandle: 'fresh', settings: {} };
+  await cache.set('contributors_fresh', { contributors: { erin: 4 }, fetchedAt: Date.now() - 1000 }, 60);
+  assert.deepEqual(await fetchContributors({ collectiveSlug: 'fresh' }), { erin: 4 });
+  assert.equal(calls.graphql, 0);
+  assert.deepEqual(calls.org, []);
+});
+
+test('stale entry: served at once, refreshed once in the background', async () => {
+  collectives.stale = { id: 4, slug: 'stale', githubHandle: 'stale', settings: {} };
+  await cache.set('contributors_stale', { contributors: { erin: 4 }, fetchedAt: Date.now() - 2 * DAY }, 60);
+
+  const results = await Promise.all([1, 2, 3].map(() => fetchContributors({ collectiveSlug: 'stale' })));
+  for (const contributors of results) {
+    assert.deepEqual(contributors, { erin: 4 });
+  }
+
+  await waitFor(async () => (await cache.get('contributors_stale')).fetchedAt > Date.now() - DAY);
+  assert.deepEqual(Object.keys(await fetchContributors({ collectiveSlug: 'stale' })), ['bob', 'alice', 'carol']);
+  assert.equal(calls.graphql, 1);
+  assert.deepEqual(calls.org, ['stale']);
+});
+
+test('entry from before fetchedAt: served, then refreshed', async () => {
+  collectives.legacy = { id: 5, slug: 'legacy', githubHandle: 'legacy', settings: {} };
+  await cache.set('contributors_legacy', { erin: 4 }, 60);
+
+  assert.deepEqual(await fetchContributors({ collectiveSlug: 'legacy' }), { erin: 4 });
+  await waitFor(async () => (await cache.get('contributors_legacy')).fetchedAt);
+  assert.deepEqual(Object.keys(await fetchContributors({ collectiveSlug: 'legacy' })), ['bob', 'alice', 'carol']);
+});
+
+test('stale entry of an account gone from the API: still served, the refresh error is logged', async () => {
+  await cache.set('contributors_gone', { contributors: { erin: 4 }, fetchedAt: Date.now() - 2 * DAY }, 60);
+  assert.deepEqual(await fetchContributors({ collectiveSlug: 'gone' }), { erin: 4 });
+  await waitFor(() => calls.graphql === 1);
+  assert.deepEqual(await fetchContributors({ collectiveSlug: 'gone' }), { erin: 4 });
+});
