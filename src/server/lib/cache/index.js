@@ -46,7 +46,7 @@ const cache = {
   clear: async () => {
     try {
       debugCache('clear');
-      return getDefaultProvider().clear();
+      return await getDefaultProvider().clear();
     } catch (err) {
       logger.warn(`Error while clearing cache: ${err.message}`);
     }
@@ -54,7 +54,7 @@ const cache = {
   del: async (key) => {
     try {
       debugCache(`del ${key}`);
-      return getDefaultProvider().del(key);
+      return await getDefaultProvider().del(key);
     } catch (err) {
       logger.warn(`Error while deleting from cache: ${err.message}`);
     }
@@ -62,7 +62,7 @@ const cache = {
   get: async (key, options) => {
     try {
       debugCache(`get ${key}`);
-      return getDefaultProvider().get(key, options);
+      return await getDefaultProvider().get(key, options);
     } catch (err) {
       logger.warn(`Error while fetching from cache: ${err.message}`);
     }
@@ -70,7 +70,7 @@ const cache = {
   has: async (key) => {
     try {
       debugCache(`has ${key}`);
-      return getDefaultProvider().has(key);
+      return await getDefaultProvider().has(key);
     } catch (err) {
       logger.warn(`Error while checking from cache: ${err.message}`);
     }
@@ -78,7 +78,7 @@ const cache = {
   set: async (key, value, expirationInSeconds, options) => {
     try {
       debugCache(`set ${key}`);
-      return getDefaultProvider().set(key, value, expirationInSeconds, options);
+      return await getDefaultProvider().set(key, value, expirationInSeconds, options);
     } catch (err) {
       logger.warn(`Error while writing to cache: ${err.message}`);
     }
