@@ -1,4 +1,4 @@
-import gqlV1 from 'graphql-tag';
+import { gql } from 'graphql-tag';
 import { get } from 'lodash';
 import PQueue from 'p-queue';
 
@@ -30,9 +30,9 @@ export async function fetchContributors({ collectiveSlug }) {
   }
 
   // Fetch data from Open Collective API
-  const query = gqlV1 /* GraphQL */ `
+  const query = gql /* GraphQL */ `
     query GithubContributors($collectiveSlug: String) {
-      Collective(slug: $collectiveSlug) {
+      account(slug: $collectiveSlug) {
         id
         name
         slug
@@ -46,7 +46,7 @@ export async function fetchContributors({ collectiveSlug }) {
 
   // Trigger Update
   logger.info(`Triggering contributors update for '${collectiveSlug}'`);
-  updateContributors(result.Collective);
+  updateContributors(result.account);
 
   // Try 30 times in 10 seconds to check if the data arrived
   let iteration = 1;
@@ -59,12 +59,6 @@ export async function fetchContributors({ collectiveSlug }) {
       return contributors;
     }
     iteration++;
-  }
-
-  // Fallback with results from Open Collective API
-  if (result.Collective.githubContributors && Object.keys(result.Collective.githubContributors).length > 0) {
-    logger.warn(`Not available. Using fallback for collective '${collectiveSlug}'`);
-    return result.Collective.githubContributors;
   }
 
   throw new Error(`Not available. Fetching contributors for collective '${collectiveSlug}'`);

@@ -6,7 +6,7 @@ const assert = require('node:assert/strict');
 const http = require('node:http');
 const { after, before, beforeEach, test } = require('node:test');
 
-const gqlV1 = require('graphql-tag').default;
+const { gql } = require('graphql-tag');
 
 const { graphqlRequest } = require('../src/server/lib/graphql');
 
@@ -40,9 +40,9 @@ beforeEach(() => {
   requests.length = 0;
 });
 
-const query = gqlV1 /* GraphQL */ `
+const query = gql /* GraphQL */ `
   query GithubContributors($collectiveSlug: String) {
-    Collective(slug: $collectiveSlug) {
+    account(slug: $collectiveSlug) {
       id
       slug
       githubHandle
@@ -53,14 +53,14 @@ const query = gqlV1 /* GraphQL */ `
 const collective = { __typename: 'Collective', id: 1, slug: 'babel', githubHandle: 'babel' };
 
 test('sends the query to the API and resolves with the data', async () => {
-  respond = () => ({ data: { Collective: collective } });
+  respond = () => ({ data: { account: collective } });
 
   const data = await graphqlRequest(query, { collectiveSlug: 'babel' });
 
-  assert.deepEqual(data, { Collective: collective });
+  assert.deepEqual(data, { account: collective });
   assert.equal(requests.length, 1);
   const [request] = requests;
-  assert.equal(request.url, '/graphql/v1?api_key=test-api-key');
+  assert.equal(request.url, '/graphql/v2?api_key=test-api-key');
   assert.equal(request.headers['oc-application'], 'contributors-svg');
   assert.equal(request.body.operationName, 'GithubContributors');
   assert.deepEqual(request.body.variables, { collectiveSlug: 'babel' });
@@ -68,24 +68,24 @@ test('sends the query to the API and resolves with the data', async () => {
 
 test('every call reaches the API, results are not cached', async () => {
   let githubHandle = 'babel';
-  respond = () => ({ data: { Collective: { ...collective, githubHandle } } });
+  respond = () => ({ data: { account: { ...collective, githubHandle } } });
 
-  assert.equal((await graphqlRequest(query, { collectiveSlug: 'babel' })).Collective.githubHandle, 'babel');
+  assert.equal((await graphqlRequest(query, { collectiveSlug: 'babel' })).account.githubHandle, 'babel');
   githubHandle = 'babel-renamed';
-  assert.equal((await graphqlRequest(query, { collectiveSlug: 'babel' })).Collective.githubHandle, 'babel-renamed');
+  assert.equal((await graphqlRequest(query, { collectiveSlug: 'babel' })).account.githubHandle, 'babel-renamed');
   assert.equal(requests.length, 2);
 });
 
 test('resolves fragments on interfaces (possibleTypes)', async () => {
-  respond = () => ({ data: { Collective: collective } });
+  respond = () => ({ data: { account: { ...collective, contributionPolicy: 'Be nice' } } });
 
   const data = await graphqlRequest(
-    gqlV1 /* GraphQL */ `
-      query Collective($collectiveSlug: String) {
-        Collective(slug: $collectiveSlug) {
+    gql /* GraphQL */ `
+      query Account($collectiveSlug: String) {
+        account(slug: $collectiveSlug) {
           id
-          ... on CollectiveInterface {
-            githubHandle
+          ... on AccountWithContributions {
+            contributionPolicy
           }
         }
       }
@@ -93,7 +93,7 @@ test('resolves fragments on interfaces (possibleTypes)', async () => {
     { collectiveSlug: 'babel' },
   );
 
-  assert.equal(data.Collective.githubHandle, 'babel');
+  assert.equal(data.account.contributionPolicy, 'Be nice');
 });
 
 test('rejects with the API error message', async () => {

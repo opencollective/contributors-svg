@@ -6,7 +6,7 @@ export default [
   {
     files: ['**/*.js'],
 
-    // Lint GraphQL queries embedded in `gql` / `gqlV1` tags against the schemas (see graphql.config.js)
+    // Lint GraphQL queries embedded in `gql` tags against the V2 schema (see graphql.config.js)
     processor: graphqlPlugin.processor,
 
     settings: {

@@ -2,22 +2,21 @@ import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client/core';
 
 import fetch from './fetch';
 
-const getGraphqlUrl = ({ version = 'v1' } = {}) => {
+const getGraphqlUrl = () => {
   const apiKey = process.env.API_KEY;
   const baseApiUrl = process.env.API_URL;
-  return `${baseApiUrl}/graphql/${version}${apiKey ? `?api_key=${apiKey}` : ''}`;
+  return `${baseApiUrl}/graphql/v2${apiKey ? `?api_key=${apiKey}` : ''}`;
 };
 
 let client;
 
-function getClient({ version = 'v1' } = {}) {
+function getClient() {
   if (!client) {
     client = new ApolloClient({
-      link: new HttpLink({ uri: getGraphqlUrl({ version }), fetch }),
+      link: new HttpLink({ uri: getGraphqlUrl(), fetch }),
       cache: new InMemoryCache({
         possibleTypes: {
           Transaction: ['Expense', 'Order', 'Debit', 'Credit'],
-          CollectiveInterface: ['Collective', 'Event', 'Project', 'Fund', 'Organization', 'User', 'Vendor'],
           Account: ['Collective', 'Host', 'Individual', 'Fund', 'Project', 'Bot', 'Event', 'Organization', 'Vendor'],
           AccountWithHost: ['Collective', 'Event', 'Fund', 'Project'],
           AccountWithParent: ['Event', 'Project'],

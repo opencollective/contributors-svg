@@ -30,7 +30,11 @@ const githubData = async (contributorData) => {
 stub('graphql.js', {
   graphqlRequest: async (query, { collectiveSlug }) => {
     calls.graphql++;
-    return { Collective: collectives[collectiveSlug] };
+    if (!collectives[collectiveSlug]) {
+      // The API's error for an unknown slug, which the banner controller turns into a 404
+      throw new Error(`No collective found with slug ${collectiveSlug}`);
+    }
+    return { account: collectives[collectiveSlug] };
   },
 });
 stub('github.js', {
@@ -80,4 +84,11 @@ test('GitHub fetches run through the queue, at most 5 at a time', async () => {
   assert.equal(results.length, 8);
   assert.equal(calls.org.length, 8);
   assert.equal(maxRunning, 5);
+});
+
+test('unknown slug: fails with the API error, without fetching GitHub', async () => {
+  await assert.rejects(fetchContributors({ collectiveSlug: 'no-such-collective' }), /No collective found/);
+  assert.equal(calls.graphql, 1);
+  assert.deepEqual(calls.org, []);
+  assert.deepEqual(calls.repo, []);
 });

@@ -12,19 +12,5 @@ module.exports = {
         },
       },
     },
-    graphqlV1: {
-      schema: 'src/graphql/schema.graphql',
-      // Files that only use `gqlV1`; everything else is checked against the V2 schema
-      documents: ['src/server/lib/contributors.js', 'test/graphql.test.js'],
-      extensions: {
-        endpoints: {
-          dev: 'http://localhost:3060/graphql/v1',
-          prod: 'https://api.opencollective.com/graphql/v1',
-        },
-        pluckConfig: {
-          globalGqlIdentifierName: 'gqlV1',
-        },
-      },
-    },
   },
 };
