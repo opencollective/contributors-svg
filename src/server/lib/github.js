@@ -7,7 +7,7 @@ import { logger } from '../logger';
 import cache from './cache';
 
 const compactRepo = (repo) => {
-  repo = pick(repo, ['name', 'owner', 'stargazers_count']);
+  repo = pick(repo, ['name', 'owner', 'stargazers_count', 'fork']);
   repo.owner = pick(repo.owner, ['login']);
   return repo;
 };
@@ -62,6 +62,10 @@ async function getAllOrganizationPublicRepos(org, accessToken) {
 
 const noContentToArray = (value) => (isArray(value) ? value : []);
 
+// Statuses of a repository that can't be read (gone, empty, blocked for legal reasons): skipped in an
+// organization instead of failing its whole banner. Others (rate limit, server errors) still fail it.
+const UNAVAILABLE_REPOSITORY_STATUSES = [404, 409, 451];
+
 const getAllContributors = async (repo) => {
   const cacheKey = `repos_contributors_${repo.owner}_${repo.repo}`;
   const fromCache = await cache.get(cacheKey);
@@ -113,7 +117,16 @@ export const getOrgData = (org) => {
       if (repo.fork) {
         continue;
       }
-      const contributors = await getAllContributors({ owner: repo.owner.login, repo: repo.name });
+      let contributors;
+      try {
+        contributors = await getAllContributors({ owner: repo.owner.login, repo: repo.name });
+      } catch (error) {
+        if (!UNAVAILABLE_REPOSITORY_STATUSES.includes(error.status)) {
+          throw error;
+        }
+        logger.warn(`Skipping repository ${repo.owner.login}/${repo.name} of ${org}: HTTP ${error.status}`);
+        continue;
+      }
       for (const contributor of contributors) {
         if (contributorData[contributor.login]) {
           contributorData[contributor.login] += contributor.contributions;

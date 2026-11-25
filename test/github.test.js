@@ -19,11 +19,25 @@ const orgs = {
     ...range(100, (i) => ({ name: `repo-${i}`, owner: { login: 'babel' }, stargazers_count: i })),
     { name: 'babel', owner: { login: 'babel' }, stargazers_count: 1000 },
   ],
+  firoorg: [
+    { name: 'firo', owner: { login: 'firoorg' }, stargazers_count: 800 },
+    { name: 'bitcoin', owner: { login: 'firoorg' }, stargazers_count: 5, fork: true },
+    { name: 'zedwallet-ios', owner: { login: 'firoorg' }, stargazers_count: 3 },
+  ],
+  ratelimited: [{ name: 'limited', owner: { login: 'ratelimited' }, stargazers_count: 1 }],
 };
 const contributors = {
   'babel/babel': range(150, (i) => ({ login: `user-${i}`, contributions: i + 1, id: i })),
   'babel/repo-0': [{ login: 'user-0', contributions: 10 }],
   'babel/empty': null, // 204 No Content
+  'firoorg/firo': [{ login: 'reuben', contributions: 5 }],
+  'firoorg/bitcoin': [{ login: 'satoshi', contributions: 100 }],
+};
+
+// Repositories answering with an error status
+const errors = {
+  'firoorg/zedwallet-ios': 451, // Unavailable For Legal Reasons
+  'ratelimited/limited': 403,
 };
 
 const requests = [];
@@ -49,6 +63,12 @@ before(() => {
       return json(orgs[match[1]] || [], page, perPage);
     }
     if ((match = url.pathname.match(/^\/repos\/([^/]+\/[^/]+)\/contributors$/))) {
+      if (errors[match[1]]) {
+        return new Response(JSON.stringify({ message: 'Error' }), {
+          status: errors[match[1]],
+          headers: { 'content-type': 'application/json' },
+        });
+      }
       const list = contributors[match[1]];
       if (list === null) {
         return new Response(null, { status: 204 });
@@ -103,4 +123,15 @@ test('organization: all pages of public repositories, contributions summed acros
   // user-0: 1 in babel/babel, 10 in babel/repo-0
   assert.equal(contributorData['user-0'], 11);
   assert.equal(contributorData['user-149'], 150);
+});
+
+test('organization: forks are skipped, and so are repositories that cannot be read', async () => {
+  const { contributorData, repoData } = await getOrgData('firoorg');
+  assert.deepEqual(contributorData, { reuben: 5 });
+  assert.deepEqual(Object.keys(repoData), ['firo']);
+  assert.ok(!requests.some((r) => r.path.startsWith('/repos/firoorg/bitcoin/')));
+});
+
+test('organization: other errors still fail it, not to cache partial contributors', async () => {
+  await assert.rejects(getOrgData('ratelimited'), { status: 403 });
 });
